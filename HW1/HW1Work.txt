@@ -1,0 +1,44 @@
+ICS 313 Homework 1
+Work
+
+* make contact
+(defun make-contact(firstName lastName address phoneNumber)
+(list :firstName firstName :lastName lastName :address address :phoneNumber phoneNumber))
+
+* add contact
+(defun add-contact(contact)(push contact *db*)))
+
+(defun add-contacts (make-cd "Randy" "Orton" "66-011 Kamehameha Hwy, Haleiwa, HI 96712" "+1 (808) 852-9991" ))
+  ((:first-name "Randy" :last-name "Orton" :address "66-011 Kamehameha Hwy, Haleiwa, HI 96712" :phone-number "+1 (808) 852-9991"))
+
+* dump-db, save-db, load-db
+
+(defun dump-db() (dolist (contact *db*) format t "~{~a:~10t~a~%~}~%" contact))
+
+(defun save-db (filename)
+  (with-open-file (out filename
+                   :direction :output
+                   :if-exists :supersede)
+    (with-standard-io-syntax
+      (print *db* out))))
+
+(defun load-db (filename)
+        (with-open-file (in filename)
+          (with-standard-io-syntax
+            (setf *db* (read in)))))
+
+* select and where, allowing you to select on :first-name, :last-name, :address, and :phone
+
+(defun select (selector-fn)
+(remove-if-not selector-fn *db*))
+
+
+
+(defun where (&key first-name last-name address phone (ripped nil ripped-p))
+#'(lambda (contact)
+( and
+(if first-name (equal (getf contact *first-name) first-name) t)
+(if last-name (equal (getf contact *last-name) last-name) t)
+(if address (equal (getf contact *address) address) t)
+(if phone (equal (getf contact *phone) phone) t)
+))
